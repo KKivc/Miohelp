@@ -1,4 +1,4 @@
-"""ch08 验收 1 演示:新内置工具 = 往 builtin/ 丢本文件,核心代码零改动。
+"""验收 1 演示:新内置工具 = 往 builtin/ 丢本文件,核心代码零改动。
 演示步骤:
   cp scripts/demo_promotions.py.txt app/tools/builtin/promotions.py
   重启 uvicorn(内置工具服务启动时登记)→ 聊天问「最近有什么优惠活动」即可用。

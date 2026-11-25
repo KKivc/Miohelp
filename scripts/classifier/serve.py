@@ -1,4 +1,4 @@
-"""ch10 推理服务:ONNX + FastAPI 独立进程 :8110,轻运行时(onnxruntime + tokenizers,不背 torch)。
+"""推理服务:ONNX + FastAPI 独立进程 :8110,轻运行时(onnxruntime + tokenizers,不背 torch)。
 起停:make classifier-up / classifier-down(仓库惯例 nohup + pid 文件)。"""
 import json
 import pathlib
@@ -15,7 +15,7 @@ from scripts.classifier.inference_lib import apply_threshold
 
 DIR = pathlib.Path("data/classifier/onnx")
 
-app = FastAPI(title="miohelp ch10 topic classifier")
+app = FastAPI(title="miohelp topic classifier")
 _sess = ort.InferenceSession(str(DIR / "model.onnx"), providers=["CPUExecutionProvider"])
 _tok = Tokenizer.from_file(str(DIR / "tokenizer.json"))
 _tok.enable_truncation(max_length=128)

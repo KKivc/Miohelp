@@ -15,7 +15,7 @@ async def main() -> int:
     samples = json.loads(SAMPLES.read_text(encoding="utf-8"))
     failures = 0
     for s in samples:
-        hits = await retrieval.search_knowledge(s["query"], strategy="vector")  # ch03 纯向量召回验证
+        hits = await retrieval.search_knowledge(s["query"], strategy="vector")  # 纯向量召回验证
         top = hits[0] if hits else None
         ok = bool(top) and s["expect_answer_contains"] in top["answer"]
         failures += not ok

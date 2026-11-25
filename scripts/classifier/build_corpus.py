@@ -1,4 +1,4 @@
-"""ch10 语料流水线:捞池 → 脱敏去重 → LLM 修错别字 → LLM 预标 → 模拟补足 → 导出人工抽审。
+"""语料流水线:捞池 → 脱敏去重 → LLM 修错别字 → LLM 预标 → 模拟补足 → 导出人工抽审。
 运行:make classifier-corpus(需 mysql + 聊天上游)。产物落 data/classifier/,抽审文件给用户对话里审。"""
 import asyncio
 import json
@@ -129,7 +129,7 @@ async def main() -> None:
     print(f"语料总量 {len(labeled)} 条;各类:{counts}")
     # 5) 抽审导出:真实池全量 + 每类模拟抽 5
     rng = random.Random(42)
-    lines = ["# ch10 语料人工抽审(预标 + 模拟)", "",
+    lines = ["# 语料人工抽审(预标 + 模拟)", "",
              "> 格式:问题 → 标签。看到错标直接指出原句。", "",
              "## 真实池问题(全量)", ""]
     for s in labeled:

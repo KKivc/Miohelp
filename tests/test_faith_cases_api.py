@@ -1,4 +1,4 @@
-"""ch04 编造个案台账:一题一行、复发退回未解决、分页、角标原文如实带出、处置状态流转。"""
+"""编造个案台账:一题一行、复发退回未解决、分页、角标原文如实带出、处置状态流转。"""
 import pytest
 from fastapi import FastAPI
 from httpx import ASGITransport, AsyncClient

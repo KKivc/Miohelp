@@ -1,8 +1,8 @@
 -- =============================================================
--- ch09 · 可观测性与数据飞轮 · 建表 DDL
--- 本章新建:review_queue(待审队列,标准化去重后的知识缺口)
+-- 可观测性与数据飞轮 · 建表 DDL
+-- 新建:review_queue(待审队列,标准化去重后的知识缺口)
 --          eval_runs(自动化评估流水线每轮结果,连起来看趋势)
--- 并给 ch04 的 low_confidence_questions 加两列:
+-- 并给 06-retrieval-ddl.sql 建的 low_confidence_questions 加两列:
 --   matched_review_id 记这条原话查重后归并到哪个缺口
 --   retrieved_chunks  存落池时的召回片段快照,审核页给人看
 -- 建表顺序:先 CREATE review_queue,再 ALTER low_confidence_questions 加外键指向它
@@ -19,7 +19,7 @@ CREATE TABLE review_queue (
   ai_suggested_answer TEXT            NULL                    COMMENT '模型生成的示例答案,备查',
   occurrence_count    INT UNSIGNED    NOT NULL DEFAULT 1      COMMENT '出现次数,查重命中累加,越高越该优先补',
   review_status       ENUM('待审','通过','驳回') NOT NULL DEFAULT '待审' COMMENT '人工审核状态',
-  approved_answer     TEXT            NULL                    COMMENT '审核通过时补的核准答案,走 ch03 落库流程写回知识库',
+  approved_answer     TEXT            NULL                    COMMENT '审核通过时补的核准答案,走知识库落库流程写回知识库',
   created_at          DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '首次入队时间',
   updated_at          DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (id),

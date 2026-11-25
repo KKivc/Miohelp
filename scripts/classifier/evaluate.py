@@ -1,4 +1,4 @@
-"""ch10 评测:留出测试集上每类 P/R/F1 + 每类混淆矩阵 + 容错红线 + 判错样本导出。
+"""评测:留出测试集上每类 P/R/F1 + 每类混淆矩阵 + 容错红线 + 判错样本导出。
 运行:make classifier-eval。评测集扎在自家电商场景(dataset/test.jsonl),不引公开榜单。
 产物一式两份:.md 给人读、.json 给验收页读(/acceptance/eval、/acceptance/errors),同一次评测同一份数。"""
 import datetime as dt
@@ -57,7 +57,7 @@ def main() -> None:
     cms = multilabel_confusion_matrix(gold, preds)
 
     REPORTS.mkdir(parents=True, exist_ok=True)
-    lines = ["# ch10 分类器评测报告(留出测试集)", "",
+    lines = ["# 分类器评测报告(留出测试集)", "",
              f"测试集 {len(samples)} 条;判定阈值 {threshold}(验证集扫描所得)。", "",
              f"**micro**: P={micro_p:.3f} R={micro_r:.3f} F1={micro_f1:.3f}  |  "
              f"**macro**: P={macro_p:.3f} R={macro_r:.3f} F1={macro_f1:.3f}", "",
@@ -81,7 +81,7 @@ def main() -> None:
         lines.append(f"- **{name}**: TN={tn} FP={fp} FN={fn} TP={tp}")
     (REPORTS / "eval_report.md").write_text("\n".join(lines), encoding="utf-8")
 
-    err = ["# ch10 判错样本(人工复核:错在哪一类?标注本身有没有毛病?)", ""]
+    err = ["# 判错样本(人工复核:错在哪一类?标注本身有没有毛病?)", ""]
     errors: list[dict] = []
     for i, s in enumerate(samples):
         pred_labels = [TOPIC_NAMES[j] for j in range(NUM_CLASSES) if preds[i][j]]

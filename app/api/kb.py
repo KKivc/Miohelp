@@ -248,7 +248,7 @@ async def vectorize() -> dict:
 
 class SearchIn(BaseModel):
     q: str
-    strategy: str = "vector"        # 本章只跑 dense 单路;bm25/hybrid 是 ch04 的事
+    strategy: str = "vector"        # 默认 dense 单路;bm25/hybrid 由调用方显式指定
     top_k: int = Field(default=5, ge=1, le=20)
 
 

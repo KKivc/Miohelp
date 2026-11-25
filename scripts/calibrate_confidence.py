@@ -1,4 +1,4 @@
-"""ch09 置信度阈值校准:拿 ch04 评估集,A/B/C 桶(应可答)与 D 桶(应拒答)分别算
+"""置信度阈值校准:拿 RAG 评估集,A/B/C 桶(应可答)与 D 桶(应拒答)分别算
 evidence_confidence 分布,扫阈值取 Youden J(=可答通过率 - 应拒放行率)最大的分离点。
 输出分布表 + 推荐阈值 → 人工回填 settings.evidence_confidence_threshold(不拍脑袋)。
 运行:make calibrate-confidence(需 milvus + 上游可调通 + 知识库已建)。
@@ -71,7 +71,7 @@ async def main():
         if j > best_j:
             best_t, best_j = t, j
     _log(f"\n推荐阈值 evidence_confidence_threshold = {best_t:.2f}(Youden J={best_j:.3f})")
-    _log("请回填 app/config.py 默认值,并在 dev-notes/ch09.md 记录本次校准。")
+    _log("请回填 app/config.py 默认值,并在提交说明里记录本次校准。")
 
     pick = next((r for r in scan if r["t"] == round(best_t, 2)), None)
     recommended = {"threshold": round(best_t, 2), "youden_j": round(best_j, 3),

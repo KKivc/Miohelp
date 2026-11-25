@@ -1,4 +1,4 @@
-"""ch07 后台摘要:触发判据 / 边界 / 防抖 / 任务体(LLM 用假实现,不打真上游)。"""
+"""后台摘要:触发判据 / 边界 / 防抖 / 任务体(LLM 用假实现,不打真上游)。"""
 import asyncio
 from types import SimpleNamespace
 

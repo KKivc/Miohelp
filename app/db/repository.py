@@ -89,7 +89,7 @@ async def create_ticket(conversation_id: int, description: str, ticket_type: str
     return ticket_no
 
 
-# ---- ch07 会话上下文管理(滑窗 + 异步摘要)----
+# ---- 会话上下文管理(滑窗 + 异步摘要)----
 
 
 async def count_messages_after(conversation_id: int, after_id: int | None) -> int:
@@ -198,7 +198,7 @@ async def list_summary_segments(conversation_id: int, limit: int | None = None) 
         return list(reversed(rows))
 
 
-# ---- ch03 知识库 chunk / 暂存表 ----
+# ---- 知识库 chunk / 暂存表 ----
 
 
 async def insert_knowledge_chunk(
@@ -424,7 +424,7 @@ async def list_conversations_with_messages() -> list[tuple[int, list[Message]]]:
         return out
 
 
-# ---- ch09 数据飞轮(待审队列 + 评估轮次)----
+# ---- 数据飞轮(待审队列 + 评估轮次)----
 
 
 async def fetch_unmatched_low_conf(limit: int) -> list[LowConfidenceQuestion]:
@@ -540,7 +540,7 @@ async def list_eval_runs(limit: int = 10) -> list[EvalRun]:
         return list(result.scalars())
 
 
-# ---- ch08 工具审计 ----
+# ---- 工具审计 ----
 
 
 async def insert_tool_audit(
@@ -567,7 +567,7 @@ async def insert_tool_audit(
         await s.commit()
 
 
-# ---------- ch10 主题分类 ----------
+# ---------- 主题分类 ----------
 
 def _pool_text_stmt():
     """池问题取文本的公共查询:优先归并后的标准化问法,没归并退回原话。"""
@@ -580,14 +580,14 @@ def _pool_text_stmt():
 
 
 async def list_pool_texts() -> list[dict]:
-    """ch10 训练语料捞取:全量低置信度问题。"""
+    """训练语料捞取:全量低置信度问题。"""
     async with db.async_session() as s:
         rows = (await s.execute(_pool_text_stmt())).all()
     return [{"question_id": qid, "text": norm or raw} for qid, raw, norm in rows]
 
 
 async def list_unclassified_questions(limit: int = 500) -> list[dict]:
-    """ch10 旁路批处理捞取:尚未归类、且已归并的低置信度问题。
+    """旁路批处理捞取:尚未归类、且已归并的低置信度问题。
     分类器只吃归并阶段产出的标准化问法;未归并(无 matched_review_id)的
     不进分类,留到下一轮归并后再归——保证输入永远是语义完整的单句,不喂原话。"""
     stmt = (
@@ -684,7 +684,7 @@ async def topic_questions(label: str, page: int = 1, size: int = 20) -> dict:
             "pages": pages, "items": items}
 
 
-# ---- ch04 编造个案台账 ----
+# ---- 编造个案台账 ----
 
 
 async def upsert_faith_case(eval_id: str, bucket: str, query: str, answer: str, reason: str,

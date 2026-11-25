@@ -1,4 +1,4 @@
-"""ch09 可观测:Langfuse 挂载与 trace 标注,全部可选降级。
+"""可观测:Langfuse 挂载与 trace 标注,全部可选降级。
 
 接入方式:设三个环境变量 + 图编译时挂一次回调,节点业务代码零侵入。
 项目配置经 pydantic-settings(.env),不依赖 os.environ,故显式传参初始化单例。

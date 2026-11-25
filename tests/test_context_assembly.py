@@ -1,4 +1,4 @@
-"""ch07 上下文拼装(纯函数级):拼装顺序固定、滑窗从摘要边界后接原文、无摘要不插额外 system。"""
+"""上下文拼装(纯函数级):拼装顺序固定、滑窗从摘要边界后接原文、无摘要不插额外 system。"""
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 
 from app.graph.nodes import _agent_messages, _history_text

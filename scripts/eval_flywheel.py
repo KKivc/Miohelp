@@ -1,4 +1,4 @@
-"""ch09 自动化评估流水线:复用 ch04 评估集与指标,定期跑、落 eval_runs、连趋势。
+"""自动化评估流水线:复用 RAG 评估集与指标,定期跑、落 eval_runs、连趋势。
 指标:检索段 Recall@5 / MRR(hybrid_rerank,可答桶,跨文档题按组凑齐算),生成段 Faithfulness + D 桶拒答率。
 运行:make eval-flywheel(TRIGGER=手动|定时,默认手动)。cron 示例:
   0 6 * * * cd /path/to/miohelp && make eval-flywheel TRIGGER=定时 >> log/eval.log 2>&1
@@ -69,7 +69,7 @@ async def run_once() -> dict:
     absent = [s for s in samples if s["bucket"] == "D_absent"]
 
     hits_list = await asyncio.gather(*(_retrieve("hybrid_rerank", s) for s in graded))
-    # 口径跟 ch04 完全一致:跨文档题按组算,凑齐才算召回到(直接复用那边的函数)
+    # 口径跟 RAG 评估完全一致:跨文档题按组算,凑齐才算召回到(直接复用那边的函数)
     ranks = [_ranks_per_group(h, s) for s, h in zip(graded, hits_list)]
     recall = _mean([_recall_at(r, RECALL_K) for r in ranks])
     mrr = _mean([_rr(r) for r in ranks])
@@ -140,7 +140,7 @@ async def main():
     ap.add_argument("--triggered-by", default="手动", choices=["手动", "定时"])
     args = ap.parse_args()
 
-    _log(f"=== ch09 评估流水线(触发:{args.triggered_by})===")
+    _log(f"=== 评估流水线(触发:{args.triggered_by})===")
     result = await run_once()
     m = result["metrics"]
     _log(f"本轮:Recall@5={m['recall_at_5']:.3f} MRR={m['mrr']:.3f} "

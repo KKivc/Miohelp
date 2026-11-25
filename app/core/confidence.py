@@ -1,4 +1,4 @@
-"""ch09 证据置信度(README 四信号):量化「这批证据到底符不符合用户问题」。
+"""证据置信度(README 四信号):量化「这批证据到底符不符合用户问题」。
 
 信号(全部来自检索/精排结果,零额外模型调用):
   top1_score     精排 Top1 的 rerank_score(证据里最强的一条有多强)
@@ -6,7 +6,7 @@
   margin         相对分差 (Top1 - Top2) / Top1(证据聚焦度:断崖式领先 vs 一堆似是而非;
                  用相对值是为了让量级和其他信号对齐,绝对分差通常很小,乘权重后贡献被压低;
                  单条命中没有对比证据,记 0)
-  key_clause_hit Top3 文本是否命中关键条款词表(复用 ch03 入库同款 KEY_TERMS 启发式——
+  key_clause_hit Top3 文本是否命中关键条款词表(复用知识库入库同款 KEY_TERMS 启发式——
                  hit 里没有 is_key_clause 字段,按同词表现算,口径与入库标记一致)
 
 组合:固定权重线性加权归一到 0-1。权重是模块常量不进 settings——评估集校准的是
@@ -16,7 +16,7 @@ from dataclasses import dataclass
 
 from app.kb.documents import KEY_TERMS
 
-VALID_SCORE_FLOOR = 0.3   # 有效证据线(沿用 ch04 rerank_min_score 的经验位)
+VALID_SCORE_FLOOR = 0.3   # 有效证据线(沿用 rerank_min_score 的经验位)
 VALID_COUNT_CAP = 3       # 有效证据数归一封顶:3 条及以上算满分
 W_TOP1, W_VALID, W_MARGIN, W_KEY = 0.5, 0.2, 0.2, 0.1
 

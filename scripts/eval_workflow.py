@@ -1,4 +1,4 @@
-"""ch05 五验收端到端评估。需全服务起(mysql/milvus/上游/app 新代码)。
+"""五验收端到端评估。需全服务起(mysql/milvus/上游/app 新代码)。
 用法:.venv/bin/python -m scripts.eval_workflow
 走 /api/agent(非流式,看得到工具轨迹与 suggested_actions);验收1 看 app 日志、验收3 前端部分见浏览器。"""
 import asyncio
@@ -46,7 +46,7 @@ async def main() -> None:
         print(f"{'✅' if ok else '❌'} {name} -> {detail}")
     print("=" * 60)
     print("验收1(强制检索节点被走到):问「退货政策是什么」后看 app 日志,")
-    print("  应见 `ch05 turn ... route=knowledge trace={... 'forced_rag': True ...}`")
+    print("  应见 `turn ... route=knowledge trace={... 'forced_rag': True ...}`")
     print("验收3(前端):浏览器点「转人工」显示已转接+客服小猫问候;点「建工单」写 tickets;都不点继续正常对话")
     passed = sum(1 for _, ok, _ in results if ok)
     print(f"\n后端可断言项 {passed}/{len(results)} 通过(glm/gpt 非确定性,抖动如实重跑记录)")

@@ -1,4 +1,4 @@
-"""「观测与成本」页的只读 API:ch09 那三张终端报表搬进后台,一页看齐、也能在页上重跑。
+"""「观测与成本」页的只读 API:原本只在终端看的三张报表搬进后台,一页看齐、也能在页上重跑。
 
 三块各有自己的权威源,这里只负责端出去:
 
@@ -98,7 +98,7 @@ async def _trend_block() -> dict:
 
 def _calibration_block() -> dict:
     block = _block(CALIB_JOB, "make calibrate-confidence",
-                   "还没校准过。按「重跑 置信度阈值校准」在 ch04 评估集上扫一遍,阈值就不用拍脑袋。")
+                   "还没校准过。按「重跑 置信度阈值校准」在 RAG 评估集上扫一遍,阈值就不用拍脑袋。")
     block["in_use"] = settings.evidence_confidence_threshold
     block["weights"] = {"top1": W_TOP1, "valid_count": W_VALID,
                         "margin": W_MARGIN, "key_clause": W_KEY}

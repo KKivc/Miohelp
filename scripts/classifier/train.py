@@ -1,4 +1,4 @@
-"""ch10 训练:RoBERTa-wwm-ext 全参微调,17 类多标签(BCEWithLogitsLoss)。
+"""训练:RoBERTa-wwm-ext 全参微调,17 类多标签(BCEWithLogitsLoss)。
 运行:make classifier-train。设备自适应 cuda→mps→cpu(Trainer 自动挑);正则化 weight_decay + 早停盯验证集 micro-F1。
 HF 下载不通时:HF_ENDPOINT=https://hf-mirror.com make classifier-train。"""
 import json

@@ -1,6 +1,6 @@
 services:
   mysql:
-    image: mysql:8   # 8.4 系;dev 数据卷自 ch02 起就是 8.4 的数据文件,钉 8.0 会拒绝降级启动
+    image: mysql:8   # 8.4 系;dev 数据卷一直是 8.4 的数据文件,钉 8.0 会拒绝降级启动
     container_name: miohelp-mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
@@ -16,7 +16,7 @@ services:
       timeout: 3s
       retries: 20
 
-  # ch04: Milvus Standalone(唯 Standalone 支持原生 BM25 全文检索)+ etcd + minio
+  # Milvus Standalone(唯 Standalone 支持原生 BM25 全文检索)+ etcd + minio
   etcd:
     image: quay.io/coreos/etcd:v3.5.16
     container_name: miohelp-milvus-etcd

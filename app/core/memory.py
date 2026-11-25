@@ -39,7 +39,7 @@ def window_budget() -> int:
 
 
 class SessionStore:
-    """内存会话存储,session_id -> 消息列表。本章不做持久化。"""
+    """内存会话存储,session_id -> 消息列表。不做持久化。"""
 
     def __init__(self) -> None:
         self._sessions: dict[str, list[BaseMessage]] = {}
@@ -62,7 +62,7 @@ def trim_history(messages: list[BaseMessage], max_tokens: int) -> list[BaseMessa
     )
 
 
-# ---- ch07 锚点切窗 + 摘要注入(三层上下文的滑窗层)----
+# ---- 锚点切窗 + 摘要注入(三层上下文的滑窗层)----
 
 _DB_ID_PREFIX = "db-"
 

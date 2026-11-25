@@ -1,4 +1,4 @@
-"""ch08 验收样例端到端评估:建工单确认流(追问/预览/确认/取消)+ 物流走 MCP。
+"""验收样例端到端评估:建工单确认流(追问/预览/确认/取消)+ 物流走 MCP。
 需全服务起:make dev(含两台 MCP Server)+ MySQL + 聊天上游;已应用 sql/10-tool-system-ddl.sql。
 用法:.venv/bin/python -m scripts.eval_tools
 判据即验收标准:中断有无/工单落表/审计状态/工具轨迹;追问措辞打印出来供人工复核(prompt 类产出)。"""
