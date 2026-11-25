@@ -12,8 +12,10 @@ data/*.sqlite*
 log/
 logs/
 *.pid
-data/ch10/*
-!data/ch10/reports
+# 评估、校准、微调的报告与模型产物都由 make 目标本地生成，不入库
+data/ch04/reports/
+data/ch09/reports/
+data/ch10/
 
 # 运行日志:后台页发起的作业与 dev.sh 启动日志,本地产物不入库
 data/*.log

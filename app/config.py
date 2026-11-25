@@ -95,7 +95,7 @@ class Settings(BaseSettings):
     # ch09 置信度闸(正式版):阈值由 make calibrate-confidence 在 ch04 评估集上校准回填,不拍脑袋
     # 实测:可答桶 p50=0.704 vs 应拒桶 p50=0.102/max=0.290,YoudenJ 最优点 0.17
     # 选 0.30 而非 0.17:误放代价远大于误拦,宁可多转人工也不放编造答案
-    # (可答通过率 82.9%、应拒放行率 0%,报告见 data/ch09/reports/confidence_calibration.txt,
+    # (可答通过率 82.9%、应拒放行率 0%,报告由 make calibrate-confidence 生成,
     #  「观测与成本」页 /observability 上也能看,推荐值与这里不一致时页面会标出来)
     evidence_confidence_threshold: float = 0.30
 
