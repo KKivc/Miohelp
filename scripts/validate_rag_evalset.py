@@ -21,7 +21,7 @@ import sys
 from app.kb import milvus_client
 
 _ROOT = pathlib.Path(__file__).resolve().parent.parent
-_EVALSET = _ROOT / "tests/data/eval_ch04.jsonl"
+_EVALSET = _ROOT / "tests/data/rag_evalset.jsonl"
 GRADED_BUCKETS = ("A_policy", "B_model", "C_colloquial", "E_multi")
 LOOSE_LIMIT = 4          # 一个 expect_section 命中超过这么多小节就提示判松
 

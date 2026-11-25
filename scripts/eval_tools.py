@@ -1,6 +1,6 @@
 """ch08 验收样例端到端评估:建工单确认流(追问/预览/确认/取消)+ 物流走 MCP。
-需全服务起:make dev(含两台 MCP Server)+ MySQL + 聊天上游;已应用 sql/ch08-ddl.sql。
-用法:.venv/bin/python -m scripts.eval_ch08
+需全服务起:make dev(含两台 MCP Server)+ MySQL + 聊天上游;已应用 sql/10-tool-system-ddl.sql。
+用法:.venv/bin/python -m scripts.eval_tools
 判据即验收标准:中断有无/工单落表/审计状态/工具轨迹;追问措辞打印出来供人工复核(prompt 类产出)。"""
 import asyncio
 import json
@@ -16,7 +16,7 @@ BASE = "http://localhost:8000"
 
 async def agent(client, msg, cid=None):
     r = await client.post(f"{BASE}/api/agent",
-                          json={"user_id": "eval-ch08", "message": msg, "conversation_id": cid})
+                          json={"user_id": "eval-tools", "message": msg, "conversation_id": cid})
     r.raise_for_status()
     return r.json()
 

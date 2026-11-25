@@ -1,5 +1,5 @@
 """ch05 五验收端到端评估。需全服务起(mysql/milvus/上游/app 新代码)。
-用法:.venv/bin/python -m scripts.eval_ch05
+用法:.venv/bin/python -m scripts.eval_workflow
 走 /api/agent(非流式,看得到工具轨迹与 suggested_actions);验收1 看 app 日志、验收3 前端部分见浏览器。"""
 import asyncio
 
@@ -12,7 +12,7 @@ async def agent(client, msg):
     """每条用独立会话(conversation_id=None),避免跨题上下文污染。"""
     r = await client.post(
         f"{BASE}/api/agent",
-        json={"user_id": "eval-ch05", "message": msg, "conversation_id": None},
+        json={"user_id": "eval-workflow", "message": msg, "conversation_id": None},
     )
     return r.json()
 

@@ -10,17 +10,17 @@ from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from app.config import settings
 
 _DDL_FILES = [
-    pathlib.Path(__file__).resolve().parent.parent / "sql" / "ch02-ddl.sql",
-    pathlib.Path(__file__).resolve().parent.parent / "sql" / "ch03-ddl.sql",
+    pathlib.Path(__file__).resolve().parent.parent / "sql" / "01-tools-ddl.sql",
+    pathlib.Path(__file__).resolve().parent.parent / "sql" / "03-kb-ddl.sql",
     # 挖知识加人工闸:给 qa_extraction_staging 的 status 补 approved/rejected 两个终态
-    pathlib.Path(__file__).resolve().parent.parent / "sql" / "ch03-staging-review.sql",
-    pathlib.Path(__file__).resolve().parent.parent / "sql" / "ch04-ddl.sql",
-    pathlib.Path(__file__).resolve().parent.parent / "sql" / "ch07-ddl.sql",
+    pathlib.Path(__file__).resolve().parent.parent / "sql" / "05-staging-review.sql",
+    pathlib.Path(__file__).resolve().parent.parent / "sql" / "06-retrieval-ddl.sql",
+    pathlib.Path(__file__).resolve().parent.parent / "sql" / "08-context-ddl.sql",
     # 分层上下文:conversations 加层1 锚点 + 分段摘要表
-    pathlib.Path(__file__).resolve().parent.parent / "sql" / "ch07-layers.sql",
-    pathlib.Path(__file__).resolve().parent.parent / "sql" / "ch08-ddl.sql",
-    pathlib.Path(__file__).resolve().parent.parent / "sql" / "ch09-ddl.sql",
-    pathlib.Path(__file__).resolve().parent.parent / "sql" / "ch10-ddl.sql",
+    pathlib.Path(__file__).resolve().parent.parent / "sql" / "09-context-layers.sql",
+    pathlib.Path(__file__).resolve().parent.parent / "sql" / "10-tool-system-ddl.sql",
+    pathlib.Path(__file__).resolve().parent.parent / "sql" / "11-flywheel-ddl.sql",
+    pathlib.Path(__file__).resolve().parent.parent / "sql" / "12-classifier-ddl.sql",
 ]
 # 删除顺序:先子表后父表;knowledge_chunks 自引用 FK 靠 FOREIGN_KEY_CHECKS=0 兜
 # ch09:low_confidence_questions 有 FK 指向 review_queue,排它前面

@@ -1,5 +1,5 @@
-"""ch06 四验收端到端评估。需全服务起(mysql/milvus/上游/app)+ 已应用 sql/ch06-ticket-type.sql。
-用法:.venv/bin/python -m scripts.eval_ch06"""
+"""ch06 四验收端到端评估。需全服务起(mysql/milvus/上游/app)+ 已应用 sql/07-ticket-type.sql。
+用法:.venv/bin/python -m scripts.eval_dialog"""
 import asyncio
 
 import httpx
@@ -9,7 +9,7 @@ BASE = "http://localhost:8000"
 
 async def agent(client, msg, cid=None):
     r = await client.post(f"{BASE}/api/agent",
-                          json={"user_id": "eval-ch06", "message": msg, "conversation_id": cid})
+                          json={"user_id": "eval-dialog", "message": msg, "conversation_id": cid})
     return r.json()
 
 

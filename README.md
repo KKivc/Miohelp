@@ -45,12 +45,12 @@ make dev                  # 依赖容器 + MCP :8101/:8102 + 应用 :8000
 | `@tool` 业务工具，单轮 Function Calling | `make eval-agent` |
 | 切块、嵌入、MySQL 与 Milvus 双写、对话挖知识 | `make kb-build` `make kb-vectorize` `make eval-retrieval` |
 | 混合检索、RRF、重排、Query 改写、四策略评估 | `make smoke-rag` `make eval-rag` |
-| LangGraph workflow 骨架 + 主力 Agent 的 ReAct 环 | `make eval-ch05` |
-| 分流器、指代消解、退款子流程的 interrupt/resume | `make smoke-interrupt` `make eval-ch06` |
-| 上下文管理。滑窗、摘要、前缀缓存 | `make eval-ch07` |
-| 工具系统。MCP 动态发现、统一执行引擎、审计日志 | `make eval-ch08` |
+| LangGraph workflow 骨架 + 主力 Agent 的 ReAct 环 | `make eval-workflow` |
+| 分流器、指代消解、退款子流程的 interrupt/resume | `make smoke-interrupt` `make eval-dialog` |
+| 上下文管理。滑窗、摘要、前缀缓存 | `make eval-summary` |
+| 工具系统。MCP 动态发现、统一执行引擎、审计日志 | `make eval-tools` |
 | Langfuse 自部署、数据飞轮、成本账 | `make langfuse-up` `make flywheel` `make eval-flywheel` `make cost-report` |
-| 主题分类器。语料、微调、阈值扫描、ONNX 推理服务 | `make ch10-corpus` `make ch10-train` `make ch10-eval` |
+| 主题分类器。语料、微调、阈值扫描、ONNX 推理服务 | `make classifier-corpus` `make classifier-train` `make classifier-eval` |
 
 ## 端口
 

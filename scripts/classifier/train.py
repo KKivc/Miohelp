@@ -1,6 +1,6 @@
 """ch10 训练:RoBERTa-wwm-ext 全参微调,17 类多标签(BCEWithLogitsLoss)。
-运行:make ch10-train。设备自适应 cuda→mps→cpu(Trainer 自动挑);正则化 weight_decay + 早停盯验证集 micro-F1。
-HF 下载不通时:HF_ENDPOINT=https://hf-mirror.com make ch10-train。"""
+运行:make classifier-train。设备自适应 cuda→mps→cpu(Trainer 自动挑);正则化 weight_decay + 早停盯验证集 micro-F1。
+HF 下载不通时:HF_ENDPOINT=https://hf-mirror.com make classifier-train。"""
 import json
 import pathlib
 
@@ -13,8 +13,8 @@ from transformers import (AutoModelForSequenceClassification, AutoTokenizer,
 from app.core.taxonomy import ID2LABEL, LABEL2ID, NUM_CLASSES
 
 BASE = "hfl/chinese-roberta-wwm-ext"
-DATA = pathlib.Path("data/ch10/dataset")
-OUT = pathlib.Path("data/ch10/model")
+DATA = pathlib.Path("data/classifier/dataset")
+OUT = pathlib.Path("data/classifier/model")
 
 
 def load_jsonl(path: pathlib.Path) -> list[dict]:
@@ -69,7 +69,7 @@ def main() -> None:
     train_ds = encode(load_jsonl(DATA / "train.jsonl"), tokenizer)
     val_ds = encode(load_jsonl(DATA / "val.jsonl"), tokenizer)
     args = TrainingArguments(
-        output_dir="data/ch10/checkpoints",       # 只放训练日志,save_strategy=no 不写权重
+        output_dir="data/classifier/checkpoints",       # 只放训练日志,save_strategy=no 不写权重
         eval_strategy="epoch",                    # v5 参数名,不是 evaluation_strategy
         save_strategy="no",                       # 零磁盘 checkpoint,最优权重走 BestInMemory
         learning_rate=2e-5,

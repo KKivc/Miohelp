@@ -1,15 +1,15 @@
 """ch10 数据集:分层划分 80/10/10 + 训练集增强(同义词替换/句式微调)。
-增强只扩训练集——验证/测试是考题,不许照练习题变。运行:make ch10-dataset(需聊天上游)。"""
+增强只扩训练集——验证/测试是考题,不许照练习题变。运行:make classifier-dataset(需聊天上游)。"""
 import asyncio
 import json
 import pathlib
 
 from app.core.llm import get_chat_model
 from app.core.taxonomy import TOPIC_NAMES
-from scripts.ch10.corpus_lib import split_dataset
+from scripts.classifier.corpus_lib import split_dataset
 
-SRC = pathlib.Path("data/ch10/corpus_labeled.jsonl")
-OUT = pathlib.Path("data/ch10/dataset")
+SRC = pathlib.Path("data/classifier/corpus_labeled.jsonl")
+OUT = pathlib.Path("data/classifier/dataset")
 # 第一版评估翻车的定向补数:光杆「买大了想退」类短句(无商品名/无「尺码」字眼)
 # 训练覆盖不足,尺码打不出来;只补训练集,考题不动
 SUPPLEMENT = pathlib.Path(__file__).parent / "supplement_sizefit.jsonl"

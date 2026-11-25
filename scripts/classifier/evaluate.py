@@ -1,5 +1,5 @@
 """ch10 评测:留出测试集上每类 P/R/F1 + 每类混淆矩阵 + 容错红线 + 判错样本导出。
-运行:make ch10-eval。评测集扎在自家电商场景(dataset/test.jsonl),不引公开榜单。
+运行:make classifier-eval。评测集扎在自家电商场景(dataset/test.jsonl),不引公开榜单。
 产物一式两份:.md 给人读、.json 给验收页读(/acceptance/eval、/acceptance/errors),同一次评测同一份数。"""
 import datetime as dt
 import json
@@ -11,11 +11,11 @@ from sklearn.metrics import multilabel_confusion_matrix, precision_recall_fscore
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
 from app.core.taxonomy import LABEL2ID, NUM_CLASSES, SEVERITY, TOPIC_NAMES
-from scripts.ch10.inference_lib import apply_threshold
+from scripts.classifier.inference_lib import apply_threshold
 
-MODEL_DIR = pathlib.Path("data/ch10/model")
-TEST = pathlib.Path("data/ch10/dataset/test.jsonl")
-REPORTS = pathlib.Path("data/ch10/reports")
+MODEL_DIR = pathlib.Path("data/classifier/model")
+TEST = pathlib.Path("data/classifier/dataset/test.jsonl")
+REPORTS = pathlib.Path("data/classifier/reports")
 RED_LINES = {"严": 0.9, "中": 0.8}   # 档位 F1 红线;宽档不设线
 
 

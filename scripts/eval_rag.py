@@ -15,7 +15,7 @@
 加 --skip-gen 只跑前两段(确定性、不碰裁判模型):裁判上游挂了或只想快速看检索侧时用,
 产物照落,页面按「生成段未完成」显示。入口 make eval-rag SKIP_GEN=1。
 
-跑完落两份产物到 data/ch04/reports/:rag_eval.txt 给人读(就是这份运行日志),
+跑完落两份产物到 data/reports/:rag_eval.txt 给人读(就是这份运行日志),
 rag_eval.json 给后台的 RAG 评估页读。页面只读这份 json、不重算——页面上的数与
 终端 make eval-rag 跑出来的必须是同一份。
 运行:make eval-rag,或在 /rag-eval 页面上按「重跑 RAG 评估」
@@ -37,7 +37,7 @@ from app.kb import milvus_client
 from app.tools.builtin import faq
 
 _ROOT = pathlib.Path(__file__).resolve().parent.parent
-_OUT_DIR = _ROOT / "data/ch04/reports"
+_OUT_DIR = _ROOT / "data/reports"
 _OUT_JSON = _OUT_DIR / "rag_eval.json"
 _OUT_TXT = _OUT_DIR / "rag_eval.txt"
 
@@ -92,7 +92,7 @@ def _log(msg=""):
 
 
 def _load():
-    return [json.loads(ln) for ln in open("tests/data/eval_ch04.jsonl")]
+    return [json.loads(ln) for ln in open("tests/data/rag_evalset.jsonl")]
 
 
 # ---------- 通用 ----------
@@ -292,7 +292,7 @@ async def _ledger(cases) -> None:
 
     报告一重跑就被覆盖,个案和它的处置状态得有地方长期待着——同一道题跨轮反复被判编造,
     才看得出库里那一格一直没补对。写库失败不影响这一轮的报告:台账是附加的管理视图,
-    不能让它把评估结果拖没了(比如没应用 sql/ch04-ddl.sql 的环境)。
+    不能让它把评估结果拖没了(比如没应用 sql/06-retrieval-ddl.sql 的环境)。
     """
     if not cases:
         _log("\n-- 编造个案台账:本轮 0 例,无需写入 --")
@@ -312,7 +312,7 @@ async def _ledger(cases) -> None:
              + (f";其中 {reopened} 条是处置过又复发" if reopened else "") + " --")
     except Exception as e:
         _log(f"\n-- 编造个案台账写入失败({type(e).__name__}),报告不受影响;"
-             f"检查是否已应用 sql/ch04-ddl.sql --")
+             f"检查是否已应用 sql/06-retrieval-ddl.sql --")
 
 
 async def _refusal_one(s):

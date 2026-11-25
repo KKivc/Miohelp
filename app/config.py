@@ -27,7 +27,7 @@ class Settings(BaseSettings):
     token_budget: int = 2000
     # 用 127.0.0.1 而非 localhost:Windows 上 localhost 先解析成 ::1,asyncmy 不回落 IPv4,连接会挂到超时
     database_url: str = "mysql+asyncmy://root:root@127.0.0.1:3306/miohelp"
-    test_database_url: str = "mysql+asyncmy://root:root@127.0.0.1:3306/miohelp_ch02_test"
+    test_database_url: str = "mysql+asyncmy://root:root@127.0.0.1:3306/miohelp_test"
     # ch03 知识库检索
     embed_model: str = "BAAI/bge-m3"          # 上游真实名(无网关别名可用)
     milvus_uri: str = "http://localhost:19530"   # ch04: Lite → Standalone
@@ -41,7 +41,7 @@ class Settings(BaseSettings):
     max_agent_steps: int = 6              # ReAct 环最大步数(封顶,超则兜底)
     # token 花销不在环里卡:那是成本控制,归 ch09 跟 Langfuse 的账一起看。
     # tokens_used 仍逐步累加,进 trace 供排障和统计,只是不再当停止条件。
-    checkpointer_db_path: str = "data/ch05_checkpoints.sqlite"  # LangGraph checkpointer(data/*.db* 已 gitignore)
+    checkpointer_db_path: str = "data/checkpoints.sqlite"  # LangGraph checkpointer(data/*.db* 已 gitignore)
     # ch06 意图识别模型配置(先求准:默认大模型;降级路仅种子,本章不实现运行时)
     # 意图识别、摘要各是一个模型槽位:三项留空就跟 CHAT 用同一家,
     # 想把某个用途换到别家上游(比如摘要走更便宜的托管方)才填这两组。

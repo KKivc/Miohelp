@@ -1,5 +1,5 @@
 """ch10 预标质量闸:黄金样例上标签集合完全一致率 ≥ 80% 才放行批量预标。
-运行:make ch10-golden(需聊天上游)。不过线就改 prompt,不许改黄金样例来凑分。
+运行:make classifier-golden(需聊天上游)。不过线就改 prompt,不许改黄金样例来凑分。
 落 reports/golden_report.json 给验收页读(/acceptance),错例带标准/预标对照。"""
 import asyncio
 import datetime as dt
@@ -7,10 +7,10 @@ import json
 import pathlib
 import sys
 
-from scripts.ch10.prelabel import prelabel_batch
+from scripts.classifier.prelabel import prelabel_batch
 
 GOLDEN = pathlib.Path(__file__).parent / "golden_samples.jsonl"
-REPORTS = pathlib.Path("data/ch10/reports")
+REPORTS = pathlib.Path("data/classifier/reports")
 PASS_RATE = 0.8
 
 

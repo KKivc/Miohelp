@@ -1,6 +1,6 @@
 """ch10 ONNX 导出:torch 模型 → onnx(变长 batch/seq),导出后跑测试集校验与 torch 预测完全一致。
 注意:torch 2.9+ 的 torch.onnx.export 默认 dynamo=True,导 HF 模型此处显式 dynamo=False
-走 TorchScript 导出器 + dynamic_axes 稳定路线(Context7 查证)。运行:make ch10-export。
+走 TorchScript 导出器 + dynamic_axes 稳定路线(Context7 查证)。运行:make classifier-export。
 落 reports/export_report.json 给验收页读(/acceptance):校验条数、不一致条数、产物大小。"""
 import datetime as dt
 import json
@@ -12,10 +12,10 @@ import onnxruntime as ort
 import torch
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
-MODEL_DIR = pathlib.Path("data/ch10/model")
-OUT = pathlib.Path("data/ch10/onnx")
-TEST = pathlib.Path("data/ch10/dataset/test.jsonl")
-REPORTS = pathlib.Path("data/ch10/reports")
+MODEL_DIR = pathlib.Path("data/classifier/model")
+OUT = pathlib.Path("data/classifier/onnx")
+TEST = pathlib.Path("data/classifier/dataset/test.jsonl")
+REPORTS = pathlib.Path("data/classifier/reports")
 
 
 def _write_report(checked: int, mismatch: int) -> None:

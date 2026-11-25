@@ -11,9 +11,9 @@ from pydantic import BaseModel
 from tokenizers import Tokenizer
 
 from app.core.taxonomy import TOPIC_NAMES
-from scripts.ch10.inference_lib import apply_threshold
+from scripts.classifier.inference_lib import apply_threshold
 
-DIR = pathlib.Path("data/ch10/onnx")
+DIR = pathlib.Path("data/classifier/onnx")
 
 app = FastAPI(title="miohelp ch10 topic classifier")
 _sess = ort.InferenceSession(str(DIR / "model.onnx"), providers=["CPUExecutionProvider"])

@@ -1,5 +1,5 @@
 """ch10 语料流水线:捞池 → 脱敏去重 → LLM 修错别字 → LLM 预标 → 模拟补足 → 导出人工抽审。
-运行:make ch10-corpus(需 mysql + 聊天上游)。产物落 data/ch10/,抽审文件给用户对话里审。"""
+运行:make classifier-corpus(需 mysql + 聊天上游)。产物落 data/classifier/,抽审文件给用户对话里审。"""
 import asyncio
 import json
 import pathlib
@@ -10,10 +10,10 @@ from pydantic import BaseModel
 from app.core.llm import get_chat_model
 from app.core.taxonomy import LABEL2ID, TOPIC_CLASSES, terminology_table
 from app.db import repository
-from scripts.ch10.corpus_lib import dedupe, desensitize
-from scripts.ch10.prelabel import prelabel_batch
+from scripts.classifier.corpus_lib import dedupe, desensitize
+from scripts.classifier.prelabel import prelabel_batch
 
-OUT = pathlib.Path("data/ch10")
+OUT = pathlib.Path("data/classifier")
 TARGET_PER_CLASS = 100
 SIM_BATCH = 20     # 单次造数条数,小批多次控质量
 

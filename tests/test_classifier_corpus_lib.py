@@ -1,5 +1,5 @@
 """ch10 语料纯函数:脱敏 / 去重 / 分层划分。"""
-from scripts.ch10.corpus_lib import dedupe, desensitize, split_dataset
+from scripts.classifier.corpus_lib import dedupe, desensitize, split_dataset
 
 
 def test_desensitize_masks_sensitive_keeps_model_no():

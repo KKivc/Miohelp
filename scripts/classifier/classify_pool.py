@@ -13,7 +13,7 @@ import httpx
 from app.db import repository
 
 SERVICE = "http://127.0.0.1:8110"
-REPORTS = pathlib.Path("data/ch10/reports")
+REPORTS = pathlib.Path("data/classifier/reports")
 
 
 def _write_report(status: str, pending: int, written: int, counts: dict) -> None:
