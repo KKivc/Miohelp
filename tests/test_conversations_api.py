@@ -1,4 +1,4 @@
-"""验收配套:会话列表 / 历史消息两个只读接口(路由层,repository 打桩;
+"""会话列表 / 历史消息两个只读接口(路由层,repository 打桩;
 真库行为在 test_repository.py::test_list_conversations_* 覆盖)。"""
 from types import SimpleNamespace
 

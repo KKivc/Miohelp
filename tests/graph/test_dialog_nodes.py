@@ -48,7 +48,7 @@ async def test_resolve_reference_rewrites_with_history(monkeypatch):
     assert out["trace"]["coref"] == "rewrite"
 
 
-# ---- Task 7: fetch_order + list_user_orders + 缺单 interrupt ----
+# ---- fetch_order + list_user_orders + 缺单 interrupt ----
 
 def test_extract_order_id():
     assert nodes._extract_order_id("订单1001的物流") == "1001"
@@ -68,7 +68,7 @@ async def test_fetch_order_uses_id_in_query():
 
 @pytest.mark.asyncio
 async def test_fetch_order_interrupts_when_missing(monkeypatch):
-    # interrupt() 只能在编译图内跑(Task 1 冒烟 D:图外直接调是 RuntimeError),
+    # interrupt() 只能在编译图内跑(scripts/smoke_interrupt.py 实测:图外直接调是 RuntimeError),
     # 故缺单路径经最小编译图 + InMemorySaver ainvoke 测真实中断 surface。
     monkeypatch.setattr(nodes.business, "list_user_orders",
                         lambda uid: [{"order_id": "1001", "product": "猫粮", "status": "已签收", "amount": 99}])
@@ -83,7 +83,7 @@ async def test_fetch_order_interrupts_when_missing(monkeypatch):
     graph = b.compile(checkpointer=InMemorySaver())
     out = await graph.ainvoke({"resolved_query": "我要退款", "user_id": "u1"},
                               {"configurable": {"thread_id": "t-fetch"}})
-    payload = out["__interrupt__"][0].value      # Task 1 冒烟 A/C 钉死此取法
+    payload = out["__interrupt__"][0].value      # scripts/smoke_interrupt.py 钉死此取法
     assert payload["type"] == "select_order"
     assert payload["orders"][0]["order_id"] == "1001"
 
@@ -119,7 +119,7 @@ def test_list_user_orders_stable_and_queryable():
     assert snap["order_id"] == a[0]["order_id"] and snap["product"] == a[0]["product"]
 
 
-# ---- Task 8: retrieve_policy 扩写多查 + 去重合并 ----
+# ---- retrieve_policy 扩写多查 + 去重合并 ----
 
 @pytest.mark.asyncio
 async def test_retrieve_policy_expands_dedups_merges(monkeypatch):
@@ -151,7 +151,7 @@ async def test_retrieve_policy_expands_dedups_merges(monkeypatch):
     assert out["trace"]["retrieve_policy"]["queries"] == ["退货政策", "无理由退换货", "退货时限"]
 
 
-# ---- Task 9: submit_refund 拦截 + _agent_messages refund 适配 ----
+# ---- submit_refund 拦截 + _agent_messages refund 适配 ----
 
 @pytest.mark.asyncio
 async def test_agent_tools_intercepts_submit_refund():
@@ -189,7 +189,7 @@ def test_agent_messages_knowledge_path_still_injects_evidence():
     assert "满99包邮" in msgs[-1].content                     # 放宽条件后知识路不回归
 
 
-# ---- Task 10: script_reply 按意图分文案 ----
+# ---- script_reply 按意图分文案 ----
 
 @pytest.mark.asyncio
 async def test_script_reply_by_intent():

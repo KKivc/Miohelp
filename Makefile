@@ -134,7 +134,7 @@ eval-workflow:
 smoke-interrupt:  ## interrupt/resume/astream 中断 surface 红线冒烟
 	uv run python scripts/smoke_interrupt.py
 
-eval-dialog:  ## 四验收端到端评估(需全服务起 + 已应用 sql/07-ticket-type.sql)
+eval-dialog:  ## 多轮对话端到端评估(需全服务起 + 已应用 sql/07-ticket-type.sql)
 	uv run python scripts/eval_dialog.py
 
 kb-preview:
@@ -171,5 +171,5 @@ kb-reset:
 eval-summary:
 	uv run python -m scripts.eval_summary
 
-eval-tools:  ## 验收样例端到端(需 make dev 全服务 + MCP Server 在跑 + 已应用 sql/10-tool-system-ddl.sql)
+eval-tools:  ## 工具系统端到端评估(需 make dev 全服务 + MCP Server 在跑 + 已应用 sql/10-tool-system-ddl.sql)
 	uv run python -m scripts.eval_tools

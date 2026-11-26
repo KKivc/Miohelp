@@ -185,7 +185,7 @@ async def resume_turn(conversation_id: int, resume_value) -> dict:
 
 async def _stream_events(cid: int, stream_source) -> AsyncIterator[dict]:
     """astream 多模式 → 事件 dict。stream_source 为 _graph_input(...)(新一轮)或 Command(resume=...)(续跑)。
-    遇 interrupt(updates 块含 __interrupt__,Task 1 冒烟钉死)→ 吐 interrupt 事件并结束本次流
+    遇 interrupt(updates 块含 __interrupt__,scripts/smoke_interrupt.py 钉死)→ 吐 interrupt 事件并结束本次流
     (前端点选后走 /api/actions/resume 续流)。"""
     config = {"configurable": {"thread_id": str(cid)},
               "metadata": {"langfuse_session_id": str(cid)}}

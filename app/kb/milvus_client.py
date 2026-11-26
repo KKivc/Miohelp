@@ -77,7 +77,7 @@ def upsert_vectors(client: MilvusClient, rows: list[dict], collection: str = COL
 
 
 def flush(client: MilvusClient, collection: str = COLLECTION) -> None:
-    """刷盘:新 upsert 的数据须 flush 后才可被 BM25/检索命中(Task 1 实证)。"""
+    """刷盘:新 upsert 的数据须 flush 后才可被 BM25/检索命中(实测)。"""
     client.flush(collection)
 
 

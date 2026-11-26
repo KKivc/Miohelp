@@ -57,7 +57,7 @@ async def search_knowledge(
     返回最终排序的 hit(hybrid_rerank 含 rerank_score);不做首尾组装(调用侧按需)。
 
     query:dense 向量化与重排用的标准问法。bm25_text:BM25/sparse 检索文本(默认同 query);
-    调用侧传入「标准问法 + 同义词扩展」只作用于 BM25 一侧,不污染 dense query(spec §2)。
+    调用侧传入「标准问法 + 同义词扩展」只作用于 BM25 一侧,不污染 dense query。
 
     所有 Milvus 同步调用(建集合/检索)经 milvus_client.acall 固定到专用单线程执行,
     客户端也在该线程惰性创建 —— 规避 gRPC 客户端跨线程共享在 async server 下的间歇空返回。

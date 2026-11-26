@@ -17,7 +17,7 @@ async def query_faq(keyword: str, category: str | None = None) -> dict:
     返回带编号证据供作答引用;证据不足时返回 sufficient=False,请据此向用户拒答。"""
     u = await query_understanding.understand(keyword)
     query = u["standard"]
-    # 同义词扩展只拼进 BM25 检索文本(检索侧),不改 dense query、不改标准问法语义(spec §2)
+    # 同义词扩展只拼进 BM25 检索文本(检索侧),不改 dense query、不改标准问法语义
     bm25_text = query + (" " + " ".join(u["expanded"]) if u["expanded"] else "")
 
     hits = await retrieval.search_knowledge(

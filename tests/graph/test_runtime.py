@@ -154,7 +154,7 @@ async def test_stream_turn_dedups_actions_before_emitting(monkeypatch, no_summar
     assert actions_events[0]["items"] == [{"type": "transfer_human"}, {"type": "create_ticket"}]
 
 
-# ---- Task 13: interrupt 事件 + resume ----
+# ---- interrupt 事件 + resume ----
 
 @pytest.mark.asyncio
 async def test_stream_turn_emits_interrupt_event(monkeypatch, no_summary_task):

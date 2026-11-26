@@ -153,7 +153,7 @@ async def resolve_reference(state) -> dict:
     写 resolved_query,供 classify_intent 与 refund_flow 检索共用(意图识别不再改写)。"""
     query = _user_text(state)
     history = _history_text(state)
-    # 验收可观测:每轮必经此节点,摘要行+滑窗在这一条日志里直接可见
+    # 可观测:每轮必经此节点,摘要行+滑窗在这一条日志里直接可见
     # (model_ctx 只在进 main_agent 的路由才有,闲聊/兜底路由靠这条看)
     logger.info("history_ctx conv=%s(摘要行+滑窗,coref/意图共用)\n%s",
                 state.get("conversation_id"), history or "(无历史)")
@@ -197,7 +197,7 @@ async def retrieve_knowledge(state) -> dict:
                 "trace": {"forced_rag": True, "evidence_confidence": conf.score,
                           "confidence_signals": conf.signals}}
 
-    # 语义闸:生成前自评证据够不够(README 的 useful 判断;这才是 self_check 入口)
+    # 语义闸:生成前自评证据够不够(useful 判断;这才是 self_check 入口)
     ev_texts = [f"{h['question']} {h['answer']}" for h in hits]
     chk = await selfcheck.check_sufficient(query, ev_texts)
     if not chk["useful"]:
@@ -288,7 +288,7 @@ def _agent_messages(state) -> list:
 
 
 def _log_model_context(state, msgs) -> None:
-    """验收可观测:把实际发给模型的摘要与滑窗打进日志(log/app.log)。
+    """可观测:把实际发给模型的摘要与滑窗打进日志(log/app.log)。
     摘要本就几十到两百字,打全文;滑窗每条打角色+前 40 字。"""
     # 本轮材料块虽然也是 HumanMessage,但它不是用户说的话,从滑窗里摘出来单独报,
     # 否则「window=N条」会凭空多一条,验收时读不准

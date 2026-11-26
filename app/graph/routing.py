@@ -2,7 +2,7 @@ from langchain_core.messages import AIMessage
 
 from app.config import settings
 
-# 九类意图 → 五出口(写死的分流规则,spec §3.1 / README route_by_intent;
+# 九类意图 → 五出口(写死的分流规则;
 # 返回值 = build.py 条件边映射键,单一来源不漂移)
 INTENT_TO_ROUTE: dict[str, str] = {
     "投诉": "escalate",

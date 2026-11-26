@@ -24,7 +24,7 @@ from app.api.topics import router as topics_router
 from app.graph import runtime
 
 # 让 app.* 的 INFO 日志可见(uvicorn 默认不给 app 记录器配 INFO handler,
-# 否则 log 节点的 turn trace——验收1 靠它观测「强制检索节点被走到」——不会输出)
+# 否则 log 节点的 turn trace——eval-workflow 靠它观测「强制检索节点被走到」——不会输出)
 _applog = logging.getLogger("app")
 if not _applog.handlers:
     _fmt = logging.Formatter("%(levelname)s:%(name)s:%(message)s")

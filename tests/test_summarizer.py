@@ -164,7 +164,7 @@ async def test_maybe_schedule_fires_and_debounces(db_session_factory, db_clean, 
 
 
 async def test_maybe_schedule_never_raises_into_reply_path(db_session_factory, db_clean, monkeypatch):
-    """触发检查在用户回复路径上,DB 抖动不得把已完成的回答炸成 500(spec §8 红线)。"""
+    """触发检查在用户回复路径上,DB 抖动不得把已完成的回答炸成 500(红线)。"""
     async def boom(cid):
         raise RuntimeError("db down")
     monkeypatch.setattr(summarizer.repository, "get_conversation", boom)

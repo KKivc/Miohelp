@@ -1,7 +1,7 @@
 """红线冒烟:interrupt/Command(resume) 在当前 langgraph 上的中断 surface 形状。
 不调聊天上游——只用一个纯 interrupt 节点。用法:.venv/bin/python -m scripts.smoke_interrupt
 
-钉死三件事(供 Task 7 fetch_order / Task 13 runtime 落地):
+钉死三件事(供 fetch_order 节点与 runtime 落地):
   A) ainvoke 遇中断返回态 __interrupt__ 键结构与取值路径
   B) Command(resume=v) 续跑,v 成为 interrupt() 返回值
   C) astream(stream_mode=["messages","updates"]) 中断出现在哪种 chunk(vs C' aget_state 探 pending)

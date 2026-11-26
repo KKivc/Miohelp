@@ -1,4 +1,4 @@
-"""验收配套:会话列表 + 历史消息回载(只读,前端多会话切换用)。"""
+"""会话列表 + 历史消息回载(只读,前端多会话切换用)。"""
 from fastapi import APIRouter, HTTPException
 
 from app.db import repository

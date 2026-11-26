@@ -86,7 +86,7 @@ class Settings(BaseSettings):
     tool_default_timeout: float = 5.0    # 内置工具默认超时(秒)
     mcp_tool_timeout: float = 10.0       # MCP 工具默认超时(走 HTTP,放宽)
     tool_max_retries: int = 2            # 只读工具暂时性故障最大重试次数
-    demo_ticket_delay_seconds: float = 0.0  # 验收 6:>0 时 create_ticket 人为变慢(写超时演示)
+    demo_ticket_delay_seconds: float = 0.0  # 超时演示:>0 时 create_ticket 人为变慢(写超时演示)
     # 可观测(Langfuse 自部署;三者齐全才挂回调,缺省时系统照常跑、测试环境不依赖)
     # 环境变量名与 Langfuse SDK 约定一致:LANGFUSE_PUBLIC_KEY / LANGFUSE_SECRET_KEY / LANGFUSE_BASE_URL
     langfuse_public_key: str = ""

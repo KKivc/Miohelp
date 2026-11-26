@@ -1,6 +1,6 @@
 """物流 MCP Server(自建,mock 数据,不接真实系统、不建表)。
 独立进程:uv run python mcp_servers/logistics_server.py
-验收 6:MOCK_DELAY_SECONDS=12 起进程 → 每次工具调用慢 12 秒,客服侧看超时/重试/审计。
+超时演示:MOCK_DELAY_SECONDS=12 起进程 → 每次工具调用慢 12 秒,客服侧看超时/重试/审计。
 实装 mcp==1.28.1:FastMCP(name, host=, port=) + run(transport="streamable-http"),路径默认 /mcp。"""
 import asyncio
 import os
