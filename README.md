@@ -1,6 +1,6 @@
 # MioHelp — 电商智能客服 Agent
 
-一个能查订单物流、答政策 FAQ、走退款子流程、挖知识补库、还能微调主题分类器的电商客服系统。
+一个能查订单物流、答政策 FAQ、走退款子流程、挖知识补库、还能给用户问题归主题的电商客服系统。
 
 ## 技术栈
 
@@ -33,7 +33,7 @@ make dev                  # 依赖容器 + MCP :8101/:8102 + 应用 :8000
 | `app/static/` | 前端页面。聊天、知识库录入、飞轮待审、观测与成本、主题分布、分类器验收 |
 | `mcp_servers/` | 两台业务 MCP Server，物流和售后各一台，独立进程 |
 | `sql/` | 建表与迁移，容器首启按文件名顺序自动执行 |
-| `scripts/` | 建库、评估、微调这些离线活 |
+| `scripts/` | 建库、评估、分类器语料与评测这些离线活 |
 
 ## 能力与验收
 
@@ -50,7 +50,7 @@ make dev                  # 依赖容器 + MCP :8101/:8102 + 应用 :8000
 | 上下文管理。滑窗、摘要、前缀缓存 | `make eval-summary` |
 | 工具系统。MCP 动态发现、统一执行引擎、审计日志 | `make eval-tools` |
 | Langfuse 自部署、数据飞轮、成本账 | `make langfuse-up` `make flywheel` `make eval-flywheel` `make cost-report` |
-| 主题分类器。语料、微调、阈值扫描、ONNX 推理服务 | `make classifier-corpus` `make classifier-train` `make classifier-eval` |
+| 主题分类器。语料、TypeSafe Jev 推理服务、评测、阈值扫描 | `make classifier-corpus` `make classifier-up` `make classifier-eval` `make classifier-threshold-scan` |
 
 ## 端口
 
@@ -58,7 +58,7 @@ make dev                  # 依赖容器 + MCP :8101/:8102 + 应用 :8000
 | - | - |
 | 8000 | 应用 |
 | 8101 / 8102 | 业务 MCP Server，物流 / 售后 |
-| 8110 | 主题分类器推理服务（`make classifier-up` 之后） |
+| 8110 | 主题分类器推理服务，转调 TypeSafe Jev（`make classifier-up` 之后，需环境变量 `TYPESAFE_API_KEY`） |
 | 3000 | Langfuse（`make langfuse-up` 之后） |
 | 19530 | Milvus |
 

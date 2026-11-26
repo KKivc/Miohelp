@@ -152,7 +152,7 @@ async def topic_questions_page() -> FileResponse:
 
 @app.get("/acceptance", include_in_schema=False)
 async def acceptance_page() -> FileResponse:
-    """验收总览:九项实证各一张闸门卡,产物缺失就地重跑。"""
+    """验收总览:每项实证一张闸门卡,产物缺失就地重跑。"""
     return FileResponse(_STATIC_DIR / "acceptance.html")
 
 
@@ -164,7 +164,7 @@ async def acceptance_eval_page() -> FileResponse:
 
 @app.get("/acceptance/data", include_in_schema=False)
 async def acceptance_data_page() -> FileResponse:
-    """数据产物:语料血缘、三份考卷与泄漏自检、训练与 ONNX 产物盘点。"""
+    """数据产物:语料血缘、三份考卷与泄漏自检。"""
     return FileResponse(_STATIC_DIR / "acceptance-data.html")
 
 

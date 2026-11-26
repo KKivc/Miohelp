@@ -37,31 +37,25 @@ eval-flywheel:  ## 评估流水线:复用 RAG 评估集,落 eval_runs 连趋势(
 cost-report:  ## 按意图 token 账(需 Langfuse 在跑;DAYS=窗口天数)
 	PYTHONPATH=. uv run python scripts/cost_by_intent.py --days $(or $(DAYS),7)
 
-# 主题分类器(数据→训练→评测→ONNX→旁路批量归类)
+# 主题分类器(数据→Jev 推理服务→评测→阈值扫描→旁路批量归类)
 classifier-golden:  ## 预标 prompt 黄金样例验证(通过率 ≥ 80% 才放行批量预标;需聊天上游)
 	PYTHONPATH=. uv run python scripts/classifier/validate_golden.py
 
 classifier-corpus:  ## 语料流水线:捞池→清洗→预标→模拟补足→导出人工抽审(需 mysql + 聊天上游)
 	PYTHONPATH=. uv run python scripts/classifier/build_corpus.py
 
-classifier-dataset:  ## 分层划分 80/10/10 + 训练集增强(需聊天上游)
+classifier-dataset:  ## 分层划分 80/10/10(读语料流水线产物,不调模型)
 	PYTHONPATH=. uv run python scripts/classifier/build_dataset.py
 
-classifier-train:  ## RoBERTa-wwm-ext 全参微调(MPS/CUDA/CPU 自适应,重依赖走 ml 组)
-	PYTHONPATH=. uv run --group ml python scripts/classifier/train.py
+classifier-eval:  ## 测试集评测:每类 P/R/F1 + 混淆矩阵 + 容错红线 + 判错样本导出(需 :8110)
+	PYTHONPATH=. uv run python scripts/classifier/evaluate.py
 
-classifier-eval:  ## 测试集评测:每类 P/R/F1 + 混淆矩阵 + 容错红线 + 判错样本导出
-	PYTHONPATH=. uv run --group ml python scripts/classifier/evaluate.py
-
-classifier-export:  ## 导出 ONNX 并校验与 torch 预测完全一致
-	PYTHONPATH=. uv run --group ml python scripts/classifier/export_onnx.py
-
-classifier-threshold-scan:  ## 阈值扫描重演:九候选线各算一遍 micro-F1(需 :8110)
+classifier-threshold-scan:  ## 阈值扫描:十三候选线(0.30~0.90)各算一遍 micro-F1(需 :8110)
 	PYTHONPATH=. uv run python scripts/classifier/scan_threshold_replay.py
 
-classifier-up:  ## 推理服务 :8110(ONNX 轻运行时)
+classifier-up:  ## 推理服务 :8110(转调 TypeSafe Jev;需环境变量 TYPESAFE_API_KEY)
 	@mkdir -p log data
-	@PYTHONPATH=. nohup uv run --group ml python scripts/classifier/serve.py > log/classifier.log 2>&1 & echo $$! > data/classifier.pid
+	@PYTHONPATH=. nohup uv run python scripts/classifier/serve.py > log/classifier.log 2>&1 & echo $$! > data/classifier.pid
 	@sleep 2 && curl -sf http://127.0.0.1:8110/healthz >/dev/null && echo "分类器服务已拉起: :8110(pid 见 data/classifier.pid)" || echo "启动失败,看 log/classifier.log"
 
 classifier-down:

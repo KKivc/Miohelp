@@ -112,13 +112,13 @@
       pAcc.appendChild(el("div", "tip",
         d.errors.length + " 条错例 → 矩阵记 " + d.matrix_entries + " 笔："
         + "冤枉 " + d.total_fp + " 次、放跑 " + d.total_fn + " 次。"
-        + "由于目前才寥寥几条，不值得为此重新训练——攒到一定数量再重训，训练是有成本的。"));
+        + "修法是给相关类目的题面补边界说明，补完要在验证集上重跑阈值扫描再看测试集。"));
       body.appendChild(pAcc);
 
       /* ② 边界摩擦配对 */
       const pPair = panel("边界摩擦：哪两类在抢标签",
         "把「该打没打的类 ← 反而打了的类」按对计数。同一对反复出现，说明有个词横跨两类、"
-        + "句子正好踩在分界线上，模型两边都觉得是。这种要成对补对照句，两边同时喂才学得会看语境。");
+        + "句子正好踩在分界线上，模型两边都觉得是。这种要在两类题面里成对补边界，说清这个词归哪边。");
       if (!d.pairs.length) {
         pPair.appendChild(el("div", "miss", "本轮没有错位型错误，没有类目在互抢标签"));
       } else {
@@ -141,7 +141,7 @@
         t.appendChild(tb); box.appendChild(t);
         pPair.appendChild(box);
         pPair.appendChild(el("div", "tip",
-          "出现 2 次以上的配对已标红——那是稳定复现的系统性偏差，优先补它的对照句。"));
+          "出现 2 次以上的配对已标红——那是稳定复现的系统性偏差，优先给这两类补边界。"));
       }
       body.appendChild(pPair);
 

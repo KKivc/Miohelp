@@ -173,9 +173,9 @@ async def _topics_card() -> dict:
 
 
 async def _classifier_card() -> dict:
-    """分类器验收:九项实证的闸门数直接取验收总览那一份,不在这里重算。"""
+    """分类器验收:各项实证的闸门数直接取验收总览那一份,不在这里重算。"""
     card = _card("classifier", "分类器验收", "/acceptance",
-                 "语料 → 微调 → 评测 → 导出 → 旁路归类,九项实证逐项过闸")
+                 "语料 → Jev 推理服务 → 评测 → 阈值扫描 → 旁路归类,逐项过闸")
     try:
         ov = await acceptance.overview()
     except Exception as e:
@@ -185,7 +185,7 @@ async def _classifier_card() -> dict:
     card["metrics"] = [{"label": "过闸", "value": f"{ov['passed']}/{ov['total']}"},
                        {"label": ":8110", "value": "在线" if online else "离线"}]
     if ov["all_pass"]:
-        card["status"], card["headline"] = "ok", "九项全过闸"
+        card["status"], card["headline"] = "ok", f"{ov['total']} 项全过闸"
     else:
         missing = [b["title"] for b in ov["blocks"] if b["status"] == "missing"]
         failed = [b["title"] for b in ov["blocks"] if b["status"] == "fail"]
