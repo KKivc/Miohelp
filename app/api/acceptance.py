@@ -1,7 +1,7 @@
-"""验收 API:把原本只能在终端看的九项实证搬上页面。只读 + 作业发起,不改任何产物。
+"""验收 API:把原本只能在终端看的各项实证搬上页面。只读 + 作业发起,不改任何产物。
 
 数据来源分两类:
-  1. 落盘产物(reports/*.json、dataset/*.jsonl、model/):由各 make 目标产出,这里只读不算
+  1. 落盘产物(reports/*.json、dataset/*.jsonl):由各 make 目标产出,这里只读不算
      ——页面上的数和终端跑出来的必须是同一份,不许在 API 里重算一遍造出第二个真相。
   2. 现场探活(:8110 healthz、单句试分类、文件 stat):秒级,请求时现取。
 产物缺失不报错,回 present=false + 该跑哪个 make 目标,页面据此长出「重跑」按钮。
@@ -17,14 +17,13 @@ from pydantic import BaseModel
 from app.core import jobs
 from app.core.taxonomy import SEVERITY, TOPIC_NAMES
 from app.db import repository
+from scripts.classifier.jev_lib import THRESHOLD
 
 router = APIRouter(prefix="/api/acceptance")
 
 CLASSIFIER_DIR = pathlib.Path("data/classifier")
 REPORTS = CLASSIFIER_DIR / "reports"
 DATASET = CLASSIFIER_DIR / "dataset"
-MODEL = CLASSIFIER_DIR / "model"
-ONNX = CLASSIFIER_DIR / "onnx"
 CLASSIFIER = "http://127.0.0.1:8110"
 
 # 语料血缘的四段落差:捞池 → 脱敏去重 → 预标+模拟补足 → 分层切卷。
@@ -34,9 +33,8 @@ LINEAGE = (
     ("corpus_clean.jsonl", "脱敏去重", "去手机号/单号 → 去重 → LLM 修错别字 → 再去重", "classifier-corpus"),
     ("corpus_labeled.jsonl", "预标 + 模拟补足", "LLM 预标真实问题,再按类补造到每类 100 条", "classifier-corpus"),
 )
-SPLITS = (("train", "训练集(含增强与定向补数)"), ("val", "验证集(挑轮次 + 定阈值)"),
+SPLITS = (("train", "训练集(切分余下部分,只做泄漏自检)"), ("val", "验证集(定阈值)"),
           ("test", "测试集(留出考卷,只在评测用一次)"))
-MODEL_TRIO = ("model.safetensors", "tokenizer.json", "threshold.json")
 
 
 def _stat(path: pathlib.Path) -> dict:
@@ -113,25 +111,16 @@ async def _probe_classifier() -> dict:
         return {"online": False, "detail": f"{type(e).__name__}: {e}"}
 
 
-def _threshold_in_use() -> float | None:
-    path = MODEL / "threshold.json"
-    if not path.exists():
-        return None
-    return json.loads(path.read_text(encoding="utf-8")).get("threshold")
-
-
 @router.get("/overview")
 async def overview() -> dict:
-    """验收总览:九个区块各给一句结论 + 一个闸门状态(pass / fail / missing)。
+    """验收总览:每个区块各给一句结论 + 一个闸门状态(pass / fail / missing)。
     状态口径:missing = 产物还没有;fail = 跑过但没过线;pass = 跑过且过线。"""
     golden = _load_report("golden_report.json", "classifier-golden")
     evaluation = _load_report("eval_report.json", "classifier-eval")
     scan = _load_report("threshold_scan.json", "classifier-threshold-scan")
-    export = _load_report("export_report.json", "classifier-export")
     classify = _load_report("classify_run.json", "classify-pool")
     ds = _split_stats()
     health = await _probe_classifier()
-    trio = {n: _stat(MODEL / n) for n in MODEL_TRIO}
     try:
         dist = await repository.topic_distribution()
         dist_total, dist_hit = dist["total"], sum(1 for c in dist["classes"] if c["count"])
@@ -172,34 +161,21 @@ async def overview() -> dict:
                   "不许改黄金样例来凑分" if golden.get("present")
                   else "还没跑过,点右下按钮现场跑一遍"),
          "jobs": ["classifier-golden"]},
-        {"key": "train", "no": 3, "title": "训练产物", "page": "/acceptance/data",
-         "status": gate(all(v["present"] for v in trio.values()),
-                        all(v["present"] for v in trio.values())),
-         # 与数据产物页的 fmtBytes 同口径(1024 进制),否则同一个权重文件会显示成两个数
-         "headline": (f"权重 {trio['model.safetensors'].get('bytes', 0) / 1024 / 1024:.0f}MB · "
-                      f"tokenizer · threshold {_threshold_in_use()}"),
-         "note": "三件套齐全,评测与服务都读 threshold.json"
-                 if all(v["present"] for v in trio.values()) else "权重三件套不全",
-         "jobs": ["classifier-train"]},
-        {"key": "export", "no": 4, "title": "ONNX 导出与服务", "page": None,
-         "status": gate(export.get("present", False),
-                        export.get("passed") and health["online"]),
-         "headline": (f"{export['checked']} 条预测与 torch 一致"
-                      f"(不一致 {export['mismatch']} 条) · :8110 "
-                      f"{'在线' if health['online'] else '离线'}"
-                      if export.get("present") else export.get("hint", "")),
-         "note": "导出后必须逐条对齐 torch 才放行",
-         "jobs": ["classifier-export", "classifier-up", "classifier-down"]},
-        {"key": "eval", "no": 5, "title": "测试集评测", "page": "/acceptance/eval",
+        {"key": "service", "no": 3, "title": "推理服务", "page": None,
+         "status": "pass" if health["online"] else "missing",
+         "headline": f":8110 {'在线' if health['online'] else '离线'} · TypeSafe Jev · 阈值 {THRESHOLD}",
+         "note": "17 类各问 Jev 一个是/否题,P(yes) 过线即命中",
+         "jobs": ["classifier-up", "classifier-down"]},
+        {"key": "eval", "no": 4, "title": "测试集评测", "page": "/acceptance/eval",
          "status": gate(evaluation.get("present", False), evaluation.get("red_line_passed")),
          "headline": (f"micro-F1 {evaluation['micro']['f1']:.3f} · "
                       f"macro-F1 {evaluation['macro']['f1']:.3f} · "
                       f"测试集 {evaluation['test_size']} 条"
                       if evaluation.get("present") else evaluation.get("hint", "")),
          "note": note(evaluation.get("present", False), evaluation.get("red_line_passed"),
-                      "严档 F1 ≥ 0.9、中档 ≥ 0.8 全部达标", "有类目跌破容错红线,回头搞数据"),
+                      "严档 F1 ≥ 0.9、中档 ≥ 0.8 全部达标", "有类目跌破容错红线,回头补题面边界"),
          "jobs": ["classifier-eval"]},
-        {"key": "threshold", "no": 6, "title": "阈值扫描", "page": "/acceptance/eval",
+        {"key": "threshold", "no": 5, "title": "阈值扫描", "page": "/acceptance/eval",
          "status": gate(scan.get("present", False), scan.get("consistent")),
          "headline": (f"{len(scan['scan'])} 条候选线扫描,当选 {scan['best_threshold']}"
                       f"(验证集 micro-F1 {scan['best_micro_f1']:.4f})"
@@ -208,7 +184,7 @@ async def overview() -> dict:
                       f"与 jev_lib.THRESHOLD 在用的 {scan.get('in_use_threshold')} 一致",
                       "扫描结果与在用阈值不一致"),
          "jobs": ["classifier-threshold-scan"]},
-        {"key": "matrix", "no": 7, "title": "混淆矩阵", "page": "/acceptance/eval",
+        {"key": "matrix", "no": 6, "title": "混淆矩阵", "page": "/acceptance/eval",
          "status": gate(evaluation.get("present", False), True),
          "headline": (f"{evaluation['total_cells']} 道是非题错 "
                       f"{evaluation['total_fp'] + evaluation['total_fn']} 道:"
@@ -216,14 +192,14 @@ async def overview() -> dict:
                       if evaluation.get("present") else evaluation.get("hint", "")),
          "note": "要紧的不是错几个,是错的方向",
          "jobs": ["classifier-eval"]},
-        {"key": "errors", "no": 8, "title": "错例复核", "page": "/acceptance/errors",
+        {"key": "errors", "no": 7, "title": "错例复核", "page": "/acceptance/errors",
          "status": gate(evaluation.get("present", False), True),
          "headline": (f"{len(evaluation.get('errors', []))} 条错例,"
                       f"记 {sum(e['matrix_entries'] for e in evaluation.get('errors', []))} 笔矩阵账"
                       if evaluation.get("present") else evaluation.get("hint", "")),
          "note": "错例条数 ≠ 矩阵笔数:错位一条记两笔",
          "jobs": ["classifier-eval"]},
-        {"key": "classify", "no": 9, "title": "旁路批量归类", "page": "/topics",
+        {"key": "classify", "no": 8, "title": "旁路批量归类", "page": "/topics",
          "status": gate(classify.get("present", False), classify.get("status") != "failed"),
          "headline": ((f"上次归类写入 {classify['written']} 条"
                        if classify.get("status") == "done"
@@ -247,25 +223,20 @@ async def eval_detail() -> dict:
     evaluation = _load_report("eval_report.json", "classifier-eval")
     scan = _load_report("threshold_scan.json", "classifier-threshold-scan")
     return {"eval": evaluation, "scan": scan,
-            "threshold_in_use": _threshold_in_use(),
+            "threshold_in_use": THRESHOLD,
             "severity": SEVERITY, "classifier": await _probe_classifier()}
 
 
 @router.get("/data")
 async def data_detail() -> dict:
-    """数据产物页数据:语料血缘四段 + 文件盘点 + 三份考卷分布与重叠自检 + 训练/ONNX 产物。"""
+    """数据产物页数据:语料血缘四段 + 文件盘点 + 三份考卷分布与重叠自检。"""
     lineage = [{"file": f, "stage": stage, "desc": desc, "make": target,
                 **_stat(CLASSIFIER_DIR / f)} for f, stage, desc, target in LINEAGE]
     return {
         "lineage": lineage,
         "dataset": _split_stats(),
         "sample_review": _stat(CLASSIFIER_DIR / "sample_review.md"),
-        "model": {"files": [_stat(p) for p in sorted(MODEL.glob("*")) if p.is_file()],
-                  "threshold": _threshold_in_use(),
-                  "threshold_file": _stat(MODEL / "threshold.json"),
-                  "trio_ok": all((MODEL / n).exists() for n in MODEL_TRIO)},
-        "onnx": {"files": [_stat(p) for p in sorted(ONNX.glob("*")) if p.is_file()],
-                 "report": _load_report("export_report.json", "classifier-export")},
+        "threshold": THRESHOLD,
         "topic_names": list(TOPIC_NAMES),
     }
 
@@ -275,7 +246,7 @@ async def errors_detail() -> dict:
     """错例复核页数据:逐条标准/预测对照 + 错误方向(漏打/多打/错位)+ 边界摩擦配对统计。
 
     配对统计是机器算的:把「该打没打的类 ← 反而打了的类」按对计数,同一对反复出现
-    就是两类之间有边界摩擦,补对照句要成对补。补哪些句子是人的判断,页面不替人编。"""
+    就是两类之间有边界摩擦,两类题面要成对补边界。边界怎么写是人的判断,页面不替人编。"""
     evaluation = _load_report("eval_report.json", "classifier-eval")
     if not evaluation.get("present"):
         return {"eval": evaluation, "errors": [], "kinds": {}, "pairs": []}
@@ -297,17 +268,16 @@ async def errors_detail() -> dict:
                   for (m, g), c in sorted(pairs.items(), key=lambda x: -x[1])],
         # 三种错各自的修法配方(通用结论,不是每条错例的具体补句)
         "recipes": {
-            "漏打": "次要诉求被主旋律淹没 → 补「主诉求 + 顺带诉求」的双标签句",
-            "错位": "某个词横跨两类 → 成对补对照句,两边同时喂才学得会看语境",
-            "多打": "边界过宽把邻类也扫进来 → 补该类的反例(近似但不属于它的句子)",
+            "漏打": "次要诉求被主旋律淹没 → 在漏掉那类的题面边界里写明「顺带提到也算」",
+            "错位": "某个词横跨两类 → 两类题面各补一句边界,说清这个词归哪边",
+            "多打": "边界过宽把邻类也扫进来 → 在该类题面里写明「某某情形归邻类,不算这类」",
         },
     }
 
 
 @router.get("/service")
 async def service() -> dict:
-    return {**await _probe_classifier(), "threshold": _threshold_in_use(),
-            "onnx_present": (ONNX / "model.onnx").exists()}
+    return {**await _probe_classifier(), "threshold": THRESHOLD}
 
 
 class ClassifyIn(BaseModel):
@@ -330,14 +300,12 @@ async def classify(body: ClassifyIn) -> dict:
         raise HTTPException(
             status_code=502,
             detail=f"分类器服务不可用({type(e).__name__}),先拉起 :8110") from e
-    threshold = _threshold_in_use()
     scores = sorted(result["scores"].items(), key=lambda x: -x[1])
-    return {"text": text, "threshold": threshold, "labels": result["labels"],
+    return {"text": text, "threshold": THRESHOLD, "labels": result["labels"],
             "scores": [{"label": k, "score": v, "hit": k in result["labels"]}
                        for k, v in scores],
             # 全类不过线时取最高分兜底:这条兜底走没走,页面直接标出来
-            "fallback": bool(threshold is not None and scores
-                             and scores[0][1] < threshold)}
+            "fallback": bool(scores and scores[0][1] < THRESHOLD)}
 
 
 # 「重跑」按钮的发起 / 状态 / 停止在 app/api/jobs.py(前缀 /api/jobs):

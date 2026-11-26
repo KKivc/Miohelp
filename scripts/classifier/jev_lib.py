@@ -1,10 +1,9 @@
 """Jev(TypeSafe)主题分类的纯函数:建题、取分。serve 与阈值扫描共用,不碰网络。
-17 类主题各问一个 Noul(是/否),P(yes) 当该类分数,保持原微调模型的多标签语义。"""
+17 类主题各问一个 Noul(是/否),P(yes) 当该类分数,多标签:过线几类就命中几类。"""
 from langchain_core.decisions import ClassifierResponse, Noul
 
 from app.core.taxonomy import TOPIC_CLASSES, TOPIC_NAMES
 
-# Jev 的 P(yes) 与微调模型的 sigmoid 不是同一把尺子,原 threshold.json 不能沿用。
 # 0.80 来自正式验证集(161 条)两次打分的扫描:0.75~0.85 差距在 Jev 调用波动内,0.80 平均最高,
 # 测试集上也最好。改题面后分数会变,先跑 make classifier-threshold-scan 复核再改这里。
 THRESHOLD = 0.80

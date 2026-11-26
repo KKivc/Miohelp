@@ -177,7 +177,7 @@
           const rl = el("td");
           if (c.red_line === null) rl.appendChild(el("span", "", "—"));
           else rl.appendChild(el("span", "pill " + (c.passed ? "pass" : "fail"),
-            c.red_line + (c.passed ? " ✅" : " 🔴 回头搞数据")));
+            c.red_line + (c.passed ? " ✅" : " 🔴 回头补题面边界")));
           tr.appendChild(rl);
           tb.appendChild(tr);
         }
@@ -189,7 +189,7 @@
 
       /* ③ 阈值扫描候选线 */
       const pScan = panel("判定阈值：候选线扫描",
-        "模型对每句话给 17 个类各打一个 0~1 的分，过线的类才算命中，这条线就是判定阈值。"
+        "Jev 对每句话给 17 个类各打一个 0~1 的分（P(yes)），过线的类才算命中，这条线就是判定阈值。"
         + "定太低会冤枉、定太高会放跑。验证集打分一次、分数表固定，十三个候选线（0.30~0.90 步进 0.05）"
         + "套同一张表各算一遍 micro-F1，谁高谁当选；打平时先到的留任。",
         scan.present ? (scan.consistent ? ["pass", "与在用阈值一致"] : ["fail", "与在用阈值不一致"]) : null);

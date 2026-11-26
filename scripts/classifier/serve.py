@@ -1,5 +1,5 @@
 """推理服务:FastAPI 独立进程 :8110,转调 TypeSafe Jev 做 17 类多标签主题分类。
-接口(/healthz、/classify)与原 ONNX 版一致,classify_pool、阈值扫描、验收页不用改。
+接口:/healthz 探活,/classify 批量回 17 类分数与过线标签,classify_pool、评测、阈值扫描、验收页都调它。
 API key 读进程环境变量 TYPESAFE_API_KEY(不走 .env),缺了启动即报错。
 文本发给 TypeSafe 前先脱敏(手机号/单号/微信QQ号),与语料流水线同一套规则。
 起停:make classifier-up / classifier-down(仓库惯例 nohup + pid 文件)。"""
