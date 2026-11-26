@@ -1,5 +1,6 @@
-"""重演 train.py 的阈值扫描(教学演示):验证集 161 条经 ONNX 服务打分一次,
+"""阈值扫描:验证集经 :8110(Jev)打分一次,
 九个候选线(0.30~0.70 步进 0.05)套同一张分数表各算一遍 micro-F1,谁高谁当选。
+当选线与 jev_lib.THRESHOLD 不一致时,按报告手动改 THRESHOLD。
 前置:make classifier-up(:8110 在线)。用法:PYTHONPATH=. uv run python scripts/classifier/scan_threshold_replay.py
 落 reports/threshold_scan.json 给验收页画九候选线(/acceptance/eval)。"""
 import datetime as dt
@@ -7,8 +8,9 @@ import json
 import pathlib
 import urllib.request
 
+from scripts.classifier.jev_lib import THRESHOLD
+
 VAL = "data/classifier/dataset/val.jsonl"
-MODEL_THRESHOLD = pathlib.Path("data/classifier/model/threshold.json")
 REPORTS = pathlib.Path("data/classifier/reports")
 SERVICE = "http://127.0.0.1:8110/classify"
 
@@ -42,17 +44,17 @@ def main() -> None:
         scan.append({"threshold": round(t, 2), "micro_f1": round(f1, 4),
                      "tp": tp, "fp": fp, "fn": fn})
         print(f"{t:>6.2f} {f1:>10.4f}")
-    print(f"\n当选:阈值 {best_t:.2f}(验证集 micro-F1 {best_f1:.4f})→ 与 threshold.json 一致")
+    print(f"\n当选:阈值 {best_t:.2f}(验证集 micro-F1 {best_f1:.4f})(在用 {THRESHOLD:.2f})")
 
-    in_use = json.loads(MODEL_THRESHOLD.read_text())["threshold"] if MODEL_THRESHOLD.exists() else None
+    in_use = THRESHOLD
     REPORTS.mkdir(parents=True, exist_ok=True)
     (REPORTS / "threshold_scan.json").write_text(json.dumps({
         "ran_at": dt.datetime.now().isoformat(timespec="seconds"),
         "val_size": len(rows), "scan": scan,
         "best_threshold": round(best_t, 2), "best_micro_f1": round(best_f1, 4),
         "in_use_threshold": in_use,
-        # 一致 = 重演选出的线与 threshold.json 里在用的线是同一条(扫描可复算的实证)
-        "consistent": in_use is not None and abs(in_use - best_t) < 1e-9,
+        # 一致 = 扫描选出的线就是 jev_lib.THRESHOLD 里在用的线
+        "consistent": abs(in_use - best_t) < 1e-9,
     }, ensure_ascii=False, indent=2), encoding="utf-8")
 
 

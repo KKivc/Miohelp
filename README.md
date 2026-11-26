@@ -58,7 +58,7 @@ make dev                  # 依赖容器 + MCP :8101/:8102 + 应用 :8000
 | - | - |
 | 8000 | 应用 |
 | 8101 / 8102 | 业务 MCP Server，物流 / 售后 |
-| 8110 | 主题分类器推理服务（`make classifier-up` 之后） |
+| 8110 | 主题分类器推理服务，转调 TypeSafe Jev（`make classifier-up` 之后，需环境变量 `TYPESAFE_API_KEY`） |
 | 3000 | Langfuse（`make langfuse-up` 之后） |
 | 19530 | Milvus |
 
