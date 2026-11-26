@@ -56,7 +56,7 @@ classifier-eval:  ## 测试集评测:每类 P/R/F1 + 混淆矩阵 + 容错红线
 classifier-export:  ## 导出 ONNX 并校验与 torch 预测完全一致
 	PYTHONPATH=. uv run --group ml python scripts/classifier/export_onnx.py
 
-classifier-threshold-scan:  ## 阈值扫描重演:九候选线各算一遍 micro-F1(需 :8110)
+classifier-threshold-scan:  ## 阈值扫描:十三候选线(0.30~0.90)各算一遍 micro-F1(需 :8110)
 	PYTHONPATH=. uv run python scripts/classifier/scan_threshold_replay.py
 
 classifier-up:  ## 推理服务 :8110(转调 TypeSafe Jev;需环境变量 TYPESAFE_API_KEY)

@@ -1,14 +1,16 @@
 """阈值扫描:验证集经 :8110(Jev)打分一次,
-九个候选线(0.30~0.70 步进 0.05)套同一张分数表各算一遍 micro-F1,谁高谁当选。
+十三个候选线(0.30~0.90 步进 0.05;Jev 的 P(yes) 偏两端,最优线常在 0.70 以上)套同一张分数表各算一遍 micro-F1,谁高谁当选。
 当选线与 jev_lib.THRESHOLD 不一致时,按报告手动改 THRESHOLD。
 前置:make classifier-up(:8110 在线)。用法:PYTHONPATH=. uv run python scripts/classifier/scan_threshold_replay.py
-落 reports/threshold_scan.json 给验收页画九候选线(/acceptance/eval)。"""
+落 reports/threshold_scan.json 给验收页画候选线(/acceptance/eval)。"""
 import datetime as dt
 import json
 import pathlib
 import urllib.request
 
 from scripts.classifier.jev_lib import THRESHOLD
+
+CANDIDATES = [round(0.30 + i * 0.05, 2) for i in range(13)]   # round 防浮点漂移,否则与 THRESHOLD 比对会误判不一致
 
 VAL = "data/classifier/dataset/val.jsonl"
 REPORTS = pathlib.Path("data/classifier/reports")
@@ -29,8 +31,7 @@ def main() -> None:
     print(f"{'候选线':>6} {'micro-F1':>10}")
     best_t, best_f1 = None, -1.0
     scan: list[dict] = []
-    for i in range(9):
-        t = 0.30 + i * 0.05
+    for t in CANDIDATES:
         tp = fp = fn = 0
         for p_row, g_row in zip(probs, gold):
             for p, g in zip(p_row, g_row):

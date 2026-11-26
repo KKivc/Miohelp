@@ -201,12 +201,12 @@ async def overview() -> dict:
          "jobs": ["classifier-eval"]},
         {"key": "threshold", "no": 6, "title": "阈值扫描", "page": "/acceptance/eval",
          "status": gate(scan.get("present", False), scan.get("consistent")),
-         "headline": (f"九候选线重演,当选 {scan['best_threshold']}"
+         "headline": (f"{len(scan['scan'])} 条候选线扫描,当选 {scan['best_threshold']}"
                       f"(验证集 micro-F1 {scan['best_micro_f1']:.4f})"
                       if scan.get("present") else scan.get("hint", "")),
          "note": note(scan.get("present", False), scan.get("consistent"),
-                      f"与 threshold.json 在用的 {scan.get('in_use_threshold')} 一致",
-                      "重演结果与在用阈值不一致"),
+                      f"与 jev_lib.THRESHOLD 在用的 {scan.get('in_use_threshold')} 一致",
+                      "扫描结果与在用阈值不一致"),
          "jobs": ["classifier-threshold-scan"]},
         {"key": "matrix", "no": 7, "title": "混淆矩阵", "page": "/acceptance/eval",
          "status": gate(evaluation.get("present", False), True),
@@ -243,7 +243,7 @@ async def overview() -> dict:
 
 @router.get("/eval")
 async def eval_detail() -> dict:
-    """评测详情页数据:每类 P/R/F1/support/红线、混淆矩阵、micro vs macro、阈值扫描九候选线。"""
+    """评测详情页数据:每类 P/R/F1/support/红线、混淆矩阵、micro vs macro、阈值扫描候选线。"""
     evaluation = _load_report("eval_report.json", "classifier-eval")
     scan = _load_report("threshold_scan.json", "classifier-threshold-scan")
     return {"eval": evaluation, "scan": scan,

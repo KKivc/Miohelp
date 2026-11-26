@@ -18,6 +18,11 @@ def test_one_question_per_topic():
         assert f"「{name}」" in questions[f"topic_{i}"].instructions
 
 
+def test_quality_question_excludes_repair_only():
+    q = build_questions()[f"topic_{TOPIC_NAMES.index('质量问题')}"].instructions
+    assert "归「保修维修」" in q
+
+
 def test_scores_follow_topic_order_not_answer_order():
     n = len(TOPIC_NAMES)
     shuffled = {f"topic_{i}": i / 100 for i in reversed(range(n))}
