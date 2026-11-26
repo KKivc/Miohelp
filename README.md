@@ -2,6 +2,8 @@
 
 一个能查订单物流、答政策 FAQ、走退款子流程、挖知识补库、还能用 TypeSafe Jev 给用户问题归主题的电商客服系统。
 
+![聊天页：回答政策问题，每条结论标注出处](docs/chat.png)
+
 ## 技术栈
 
 FastAPI + LangGraph / LangChain + SQLAlchemy / MySQL + Milvus。
